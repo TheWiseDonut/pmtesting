@@ -2,19 +2,20 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public float moveSpeed = 5f;
+    [Header("Movement Speeds")]
+    public float walkSpeed = 5f;
+    public float sprintSpeed = 9f;
     public float jumpForce = 5f;
 
     private Rigidbody rb;
     private bool isGrounded;
 
-    // ✅ New: Store camera reference
     private Transform cameraTransform;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>(); 
-        cameraTransform = Camera.main.transform; // Get camera reference ONCE
+        cameraTransform = Camera.main.transform;
     }
 
     void Update()
@@ -35,8 +36,12 @@ public class PlayerMovement : MonoBehaviour
         // Final movement direction
         Vector3 moveDir = cameraForward * inputZ + cameraRight * inputX;
 
+        // Check if Sprinting
+        bool isSprinting = Input.GetKey(KeyCode.LeftShift);
+        float currentSpeed = isSprinting ? sprintSpeed : walkSpeed;
+
         // Maintain current Y velocity
-        Vector3 velocity = new Vector3(moveDir.x * moveSpeed, rb.linearVelocity.y, moveDir.z * moveSpeed);
+        Vector3 velocity = new Vector3(moveDir.x * currentSpeed, rb.linearVelocity.y, moveDir.z * currentSpeed);
         rb.linearVelocity = velocity;
 
         // ---- Jumping ----
